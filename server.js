@@ -1,70 +1,37 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const router = require('./routes/drivers');
 const cors = require('cors');
 
 const app = express();
+
 app.use(express.json());
 app.use(cors());
+app.use('/v1/drivers', router); // Ahora router está definido correctamente
+
+
+const corsOptions = {
+  origin: '*', // Permitir todas las solicitudes (cambiar según necesidad)
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  allowedHeaders: 'Content-Type,Authorization',
+};
+
+app.use(cors(corsOptions));  // Aplica tus opciones de CORS correctamente
+
+
+
 
 // Conexión a MongoDB
-mongoose.connect('mongodb+srv://allrg1104:vL4leF1sPmgI5w2Z@cluster0.xtqyw.mongodb.net/BD_Pedidos?retryWrites=true&w=majority&appName=Cluster0', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
+mongoose.connect('mongodb+srv://allrg1104:vL4leF1sPmgI5w2Z@cluster0.xtqyw.mongodb.net/BD_Marketplace?retryWrites=true&w=majority&appName=Cluster0')
+  //useNewUrlParser: true,
+  //useUnifiedTopology: true
+  .then(() => console.log('Conectado a MongoDB'))
+  .catch(err => console.error('Error al conectar a MongoDB', err))
+;
 
-// Definir esquema y modelo para ventas ====> IMPORTANTE
-const ventaSchema = new mongoose.Schema({
-  nombre: String,
-  producto: String
-});
+app.use(express.json());
 
-const Venta = mongoose.model('Venta', ventaSchema);
-
-// Ruta para crear una venta
-app.post('/ventas', async (req, res) => {
-  try {
-    const { nombre, producto } = req.body;
-    const nuevaVenta = new Venta({ nombre, producto });
-    await nuevaVenta.save();
-    res.status(201).json(nuevaVenta);
-  } catch (error) {
-    res.status(500).json({ error: 'Error al crear la venta' });
-  }
-});
-
-
-// Definir esquema y modelo para usuarios ====> IMPORTANTE
-const usuariosSchema = new mongoose.Schema({
-    nombre: String,
-    cedula: String,
-    correo: String,
-    direccion: String,
-    telefono: String
-});
-
-const Usuarios = mongoose.model('Usuarios', usuariosSchema);
-
-// Ruta para crear un usuario
-app.post('/usuarios', async (req, res) => {
-  try {
-    const { nombre, cedula, correo, direccion, telefono } = req.body;
-    const nuevoUsuarios = new Usuarios({ nombre, cedula, correo, direccion, telefono });
-    await nuevoUsuarios.save();
-    res.status(201).json(nuevoUsuarios);
-  } catch (error) {
-    res.status(500).json({ error: 'Error al crear el usuario' });
-  }
-});
-
-// Ruta para obtener todas las ventas
-app.get('/ventas', async (req, res) => {
-  try {
-    const ventas = await Venta.find();
-    res.json(ventas);
-  } catch (error) {
-    res.status(500).json({ error: 'Error al obtener las ventas' });
-  }
-});
+app.use('/v1/drivers', router);
 
 // Iniciar servidor
 const PORT = 5000;
