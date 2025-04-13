@@ -16,10 +16,16 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// Ruta base en Vercel (debe incluir el nombre de la función)
+app.get('/api', (req, res) => {
+  res.send('Hola, soy el BackEnd de Pedidos de Allrg');
+});
+
 app.use('/api/v1/drivers', router);
 
+// Conexión a MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 })
 .then(() => console.log('Conectado a MongoDB'))
 .catch(err => console.error('Error de conexión:', err));
