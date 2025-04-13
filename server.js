@@ -1,28 +1,27 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const serverless = require('serverless-http');
+const router = require('../routes/drivers');
 const cors = require('cors');
-const router = require('./routes/drivers');
 require('dotenv').config();
 
 const app = express();
 
-// Middleware
 app.use(express.json());
 
 const corsOptions = {
-  origin: '*', 
+  origin: '*',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   allowedHeaders: 'Content-Type,Authorization',
 };
 app.use(cors(corsOptions));
 
-app.use('/v1/drivers', router);
+// Ruta base en Vercel (debe incluir el nombre de la función)
+app.use('/api/v1/drivers', router);
 
-// Conexión a MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
 })
 .then(() => console.log('Conectado a MongoDB'))
 .catch(err => console.error('Error de conexión:', err));
 
-const PORT = 5000;
-app.listen(PORT, () => console.log(`Servidor corriendo en el puerto ${PORT}`));
+module.exports.handler = serverless(app);
