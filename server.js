@@ -29,4 +29,4 @@ mongoose.connect(process.env.MONGODB_URI, {
 .then(() => console.log('Conectado a MongoDB'))
 .catch(err => console.error('Error de conexión:', err));
 
-module.exports.handler = serverless(app);
+module.exports = app;
