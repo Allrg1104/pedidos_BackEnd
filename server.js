@@ -20,7 +20,7 @@ app.get('/api', (req, res) => {
   res.send('Hola, soy el BackEnd de Pedidos de Allrg');
 });
 
-app.use('/api/v1/drivers', router);
+app.use('/v1/drivers', router);
 
 // Conexión a MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
